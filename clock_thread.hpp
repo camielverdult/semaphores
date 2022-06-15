@@ -53,7 +53,9 @@ _Noreturn void clock_thread_func() {
         // Wait for people to fill the queue
         std::this_thread::sleep_for(std::chrono::seconds (3));
 
+        // Signal other thread that queue is full and wait until other thread empties queue
         std::cout << "CLK: signaling semaphore\n";
+        
         semaphore_signal(clock_sema);
         semaphore_wait(clock_sema);
     }
