@@ -11,9 +11,9 @@
 #include <semaphore>
 #include <random>
 #include "queue.hpp"
-#include "mach/mach.h" // cross-platform semaphore class
+#include "sema.h" // cross-platform semaphore class
 
-semaphore_t clock_sema;
+Semaphore clock_sema;
 queue first_queue;
 
 _Noreturn void fill_first_queue() {
@@ -25,13 +25,13 @@ _Noreturn void fill_first_queue() {
     // This generates group amount
     std::random_device dev_group_amount;
     std::mt19937 rng_group_amount(dev_group_amount());
-    std::uniform_int_distribution<std::mt19937::result_type> dist5(1, 5);
+    std::uniform_int_distribution<std::mt19937::result_type> dist5(1, 10);
 
     // Make queues
     first_queue.queue_number = 1;
 
     // Initialize semaphore
-    semaphore_create(mach_task_self(), &clock_sema, SYNC_POLICY_FIFO, 0);
+//    semaphore_create(mach_task_self(), &clock_sema, SYNC_POLICY_FIFO, 0);
 
     std::cout << "CLK: hello!\n";
     while (true) {
@@ -48,8 +48,10 @@ _Noreturn void fill_first_queue() {
         // Signal other thread that queue is full and wait until other thread empties queue
         std::cout << "CLK: signaling semaphore\n";
 
-        semaphore_signal(clock_sema);
-        semaphore_wait(clock_sema);
+//        semaphore_signal(clock_sema);
+        clock_sema.signal();
+//        semaphore_wait(clock_sema);
+        clock_sema.wait();
     }
 }
 

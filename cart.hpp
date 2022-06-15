@@ -33,7 +33,8 @@ _Noreturn void fill_from_first_queue() {
 
     while (true) {
         std::cout << "CART: waiting semaphore\n";
-        semaphore_wait(clock_sema);
+//        semaphore_wait(clock_sema);
+        clock_sema.wait();
 
         std::cout << "CART: checking queues\n";
 
@@ -48,7 +49,8 @@ _Noreturn void fill_from_first_queue() {
         // Wait for people to get in the cart
         std::this_thread::sleep_for(std::chrono::seconds (3));
 
-        semaphore_signal(clock_sema);
+//        semaphore_signal(clock_sema);
+        clock_sema.signal();
     }
 }
 

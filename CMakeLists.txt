@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(Semaphores C CXX)
+project(semaphores C CXX)
 
 set(CXX_STANDARD 23)
 
@@ -12,6 +12,6 @@ IF(APPLE)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
 ENDIF()
 
-add_executable(${PROJECT_NAME} main.cpp clock_thread.hpp cart.hpp queue.hpp riders_queue.hpp)
+add_executable(${PROJECT_NAME} main.cpp clock_thread.hpp cart.hpp queue.hpp sema.h)
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT}) # Add the threads library to the executable.
