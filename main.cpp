@@ -7,8 +7,8 @@
 
 int main() {
 
-    std::thread clock_thread(clock_thread_func);
-    std::thread queue_thread(cart_thread_func);
+    std::thread clock_thread(fill_first_queue);
+    std::thread queue_thread(fill_from_first_queue);
 
     clock_thread.join();
     queue_thread.join();

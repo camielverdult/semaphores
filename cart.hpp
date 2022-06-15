@@ -21,7 +21,7 @@ typedef struct cart {
 
 std::vector<cart> carts;
 
-_Noreturn void cart_thread_func() {
+_Noreturn void fill_from_first_queue() {
 
     cart cart_one = {.capacity = 6, .single_groups = 0, .dual_groups = 0, .triple_groups = 0, .left = false};
     carts.push_back(cart_one);
@@ -37,15 +37,13 @@ _Noreturn void cart_thread_func() {
 
         std::cout << "CART: checking queues\n";
 
-        // We fill the queues here;
-        for (queue& q : queues) {
-            std::cout << "Queue number " << q.queue_number << " has " << q.groups.size() << " groups. ";
-            for (group g : q.groups) {
-                std::cout << "Group number " << g.group_number << " has " << g.size << " people. ";
-            }
-            std::cout << "\n";
-            q.groups.clear();
+        // We fill the queue here;
+        std::cout << "Queue number " << first_queue.queue_number << " has " << first_queue.groups.size() << " groups. ";
+        for (group g : first_queue.groups) {
+            std::cout << "Group number " << g.group_number << " has " << g.size << " people. ";
         }
+        std::cout << "\n";
+        first_queue.groups.clear();
 
         // Wait for people to get in the cart
         std::this_thread::sleep_for(std::chrono::seconds (3));
