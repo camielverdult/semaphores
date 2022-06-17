@@ -8,40 +8,44 @@
 #include <iostream>
 
 #include "queue.hpp"
-#include "clock_thread.hpp"
 
 typedef struct cart {
-    int capacity;
-    int single_groups;
-    int dual_groups;
-    int triple_groups;
+    unsigned int capacity;
+    unsigned int single_groups;
+    unsigned int dual_groups;
+    unsigned int triple_groups;
     bool left;
+    bool back;
 } cart_t;
 
+void init_cart(cart* cart) {
+    cart->capacity = 6;
+    cart->single_groups = 0;
+    cart->dual_groups = 0;
+    cart->triple_groups = 0;
+    cart->left = false;
+}
 
-std::vector<cart> carts;
+cart cart_one;
 
-_Noreturn void fill_from_first_queue() {
+_Noreturn void fill_cart_from_first_queue() {
 
-    cart cart_one = {.capacity = 6, .single_groups = 0, .dual_groups = 0, .triple_groups = 0, .left = false};
-    carts.push_back(cart_one);
+    // A cart contains only one row of 6 people. And leaves around every 5 seconds.
+    init_cart(&cart_one);
 
-    cart cart_two = {.capacity = 6, .single_groups = 0, .dual_groups = 0, .triple_groups = 0, .left = false};
-    carts.push_back(cart_two);
-
-    std::cout << "CART: hello!\n";
+    std::cout << "CART_QUEUE: hello!\n";
 
     while (true) {
-        std::cout << "CART: waiting semaphore\n";
-//        semaphore_wait(clock_sema);
-        clock_sema.wait();
+        std::cout << "CART_QUEUE: waiting semaphore\n";
+        first_queue_sema.wait();
 
-        std::cout << "CART: checking queues\n";
+        std::cout << "CART_QUEUE: checking queues\n";
 
-        // We fill the queue here;
+        // We fill cart here from queue
         std::cout << "Queue number " << first_queue.queue_number << " has " << first_queue.groups.size() << " groups. ";
         for (group g : first_queue.groups) {
-            std::cout << "Group number " << g.group_number << " has " << g.size << " people. ";
+//            std::cout << "Group number " << g.group_number << " has " << g.size << " people. ";
+
         }
         std::cout << "\n";
         first_queue.groups.clear();
@@ -49,8 +53,42 @@ _Noreturn void fill_from_first_queue() {
         // Wait for people to get in the cart
         std::this_thread::sleep_for(std::chrono::seconds (3));
 
-//        semaphore_signal(clock_sema);
-        clock_sema.signal();
+        std::cout << "CART_QUEUE: signaling semaphore\n";
+        first_queue_sema.signal();
+    }
+}
+
+unsigned int spots_left(cart* cart) {
+    return cart->capacity - cart->dual_groups - cart->triple_groups;
+}
+
+_Noreturn void fill_cart_from_single_queue() {
+
+    std::cout << "CART_SINGLE: hello!\n";
+
+    while (true) {
+        std::cout << "CART_SINGLE: waiting semaphore\n";
+        single_queue_sema.wait();
+
+        unsigned int spots_to_fill = spots_left(&cart_one);
+
+        std::cout << "CART_SINGLE: filling last ";
+
+        if (spots_to_fill > 1) {
+            std::cout << "spot";
+        } else {
+            std::cout << spots_to_fill;
+        }
+
+        std::cout << " in cart\n";
+
+        cart_one.single_groups = spots_to_fill;
+
+        // Wait for people to get in the cart
+        std::this_thread::sleep_for(std::chrono::seconds (3));
+
+        std::cout << "CART_SINGLE: signaling semaphore\n";
+        single_queue_sema.signal();
     }
 }
 

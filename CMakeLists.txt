@@ -12,6 +12,6 @@ IF(APPLE)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
 ENDIF()
 
-add_executable(${PROJECT_NAME} main.cpp clock_thread.hpp cart.hpp queue.hpp sema.h)
+add_executable(${PROJECT_NAME} main.cpp queue.hpp cart.hpp sema.h)
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT}) # Add the threads library to the executable.

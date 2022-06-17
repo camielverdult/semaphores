@@ -1,17 +1,19 @@
 #include <iostream>
 #include <thread>
 
-#include "clock_thread.hpp"
+#include "queue.hpp"
 #include "cart.hpp"
 #include "queue.hpp"
 
 int main() {
 
-    std::thread clock_thread(fill_first_queue);
-    std::thread queue_thread(fill_from_first_queue);
+    std::thread first_fill_thread(fill_first_queue);
+    std::thread first_queue_thread(fill_cart_from_first_queue);
+//    std::thread single_rider_thread(fill_single_rider_queue);
 
-    clock_thread.join();
-    queue_thread.join();
+    first_fill_thread.join();
+    first_queue_thread.join();
+//    single_rider_thread.join();
 
     return 0;
 }
