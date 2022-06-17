@@ -58,6 +58,7 @@ _Noreturn void fill_first_queue() {
         // Wait until other thread empties queue
         std::cout << "FILL_1: waiting semaphore\n";
         first_queue_sema.wait();
+        std::cout << "FILL_1: semaphore signal received!\n";
     }
 }
 
@@ -93,6 +94,7 @@ _Noreturn void fill_single_rider_queue() {
         // Wait until other thread empties queue
         std::cout << "FILL_SINGLE: waiting semaphore\n";
         single_queue_sema.wait();
+        std::cout << "FILL_SINGLE: semaphore signal received!\n";
     }
 }
 

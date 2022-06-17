@@ -38,6 +38,7 @@ _Noreturn void fill_cart_from_first_queue() {
     while (true) {
         std::cout << "CART_QUEUE: waiting semaphore\n";
         first_queue_sema.wait();
+        std::cout << "CART_QUEUE: semaphore signal received!\n";
 
         std::cout << "CART_QUEUE: checking queues\n";
 
@@ -69,6 +70,7 @@ _Noreturn void fill_cart_from_single_queue() {
     while (true) {
         std::cout << "CART_SINGLE: waiting semaphore\n";
         single_queue_sema.wait();
+
 
         unsigned int spots_to_fill = spots_left(&cart_one);
 
