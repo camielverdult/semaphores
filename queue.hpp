@@ -10,6 +10,8 @@
 #include <random>
 #include <semaphore>
 #include <random>
+#include <iostream>
+#include <queue>
 #include "sema.h" // cross-platform semaphore class
 
 typedef struct group {
@@ -17,23 +19,13 @@ typedef struct group {
     unsigned int size;
 } group_t;
 
-typedef struct queue {
-    int queue_number;
-    std::vector<group> groups;
-} queue_t;
-
 // Semaphore and queue for first queue
 Semaphore first_queue_sema;
-queue first_queue;
+std::queue<group> first_queue;
 
 // Semaphore and queue for second queue
 Semaphore single_queue_sema;
-queue single_queue;
-
-void init_queues() {
-    first_queue.queue_number = 1;
-    single_queue.queue_number = 2;
-}
+std::queue<group> single_queue;
 
 _Noreturn void fill_first_queue() {
     // This generates a uniform distribution of groups being either 2 or 3 people big
@@ -52,7 +44,7 @@ _Noreturn void fill_first_queue() {
         // We fill the queue here;
         for (int group_amount = 0; group_amount < dist10(rng_group_amount); group_amount++) {
             group random_group = {.group_number = group_amount + 1, .size = dist2(rng_group_size)};
-            first_queue.groups.push_back(random_group);
+            first_queue.push(random_group);
         }
 
         // Wait for people to fill the queue
@@ -82,7 +74,7 @@ _Noreturn void fill_single_rider_queue() {
         // We fill the queue here;
         for (int group_amount = 0; group_amount < dist4(rng_group_amount); group_amount++) {
             group single_rider = {.group_number = group_amount + 1, .size = 1};
-            single_queue.groups.push_back(single_rider);
+            single_queue.push(single_rider);
         }
 
         // Wait for people to fill the queue
