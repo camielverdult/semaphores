@@ -8,6 +8,7 @@
 int main() {
 
     init_queues();
+    init_carts();
 
     std::thread first_fill_thread(fill_first_queue);
     std::thread first_queue_thread(fill_cart_from_first_queue);
