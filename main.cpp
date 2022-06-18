@@ -7,6 +7,8 @@
 
 int main() {
 
+    init_queues();
+
     std::thread first_fill_thread(fill_first_queue);
     std::thread first_queue_thread(fill_cart_from_first_queue);
 //    std::thread single_rider_thread(fill_single_rider_queue);

@@ -22,8 +22,18 @@ typedef struct queue {
     std::vector<group> groups;
 } queue_t;
 
+// Semaphore and queue for first queue
 Semaphore first_queue_sema;
 queue first_queue;
+
+// Semaphore and queue for second queue
+Semaphore single_queue_sema;
+queue single_queue;
+
+void init_queues() {
+    first_queue.queue_number = 1;
+    single_queue.queue_number = 2;
+}
 
 _Noreturn void fill_first_queue() {
     // This generates a uniform distribution of groups being either 2 or 3 people big
@@ -35,9 +45,6 @@ _Noreturn void fill_first_queue() {
     std::random_device dev_group_amount;
     std::mt19937 rng_group_amount(dev_group_amount());
     std::uniform_int_distribution<std::mt19937::result_type> dist10(1, 10);
-
-    // Make queues
-    first_queue.queue_number = 1;
 
     std::cout << "FILL_1: hello!\n";
     while (true) {
@@ -62,18 +69,12 @@ _Noreturn void fill_first_queue() {
     }
 }
 
-Semaphore single_queue_sema;
-queue single_queue;
-
 _Noreturn void fill_single_rider_queue() {
 
     // This generates group amount
     std::random_device dev_group_amount;
     std::mt19937 rng_group_amount(dev_group_amount());
     std::uniform_int_distribution<std::mt19937::result_type> dist4(1, 4);
-
-    // Make queues
-    single_queue.queue_number = 2;
 
     std::cout << "FILL_SINGLE: hello!\n";
     while (true) {
