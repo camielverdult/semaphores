@@ -29,14 +29,11 @@ void init_cart(cart* cart) {
 cart cart_one;
 
 void init_carts() {
+    // A cart contains only one row of 6 people. And leaves around every 5 seconds.
     init_cart(&cart_one);
 }
 
 _Noreturn void fill_cart_from_first_queue() {
-
-    // A cart contains only one row of 6 people. And leaves around every 5 seconds.
-    init_cart(&cart_one);
-
     std::cout << "CART_QUEUE: hello!\n";
 
     while (true) {
