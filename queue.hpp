@@ -75,14 +75,6 @@ _Noreturn void fill_single_rider_queue() {
         single_queue.push(single_rider);
 
         single_queue_mutex.unlock();
-
-        // Signal other thread that queue is filled
-        std::cout << "FILL_SINGLE: signaling semaphore\n";
-        single_queue_sema.signal();
-
-        // Wait until other thread empties queue
-        std::cout << "FILL_SINGLE: waiting semaphore\n";
-        single_queue_sema.wait();
     }
 }
 

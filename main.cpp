@@ -23,6 +23,6 @@ int main() {
     first_fill_from_single_queue_thread.join();
 
     cart_ride_thread.join();
-
+    
     return 0;
 }

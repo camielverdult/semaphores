@@ -42,7 +42,7 @@ _Noreturn void cart_ride() {
 
         std::cout << "CART_RIDE: cart is leaving!\n";
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             std::cout << "CART_RIDE: weee!\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -72,17 +72,18 @@ _Noreturn void fill_cart_from_first_queue() {
     while (true) {
         std::cout << "CART_QUEUE: waiting first semaphore\n";
         first_queue_sema.wait();
-        std::cout << "CART_QUEUE: first semaphore signal received! checking queues\n";
+        std::cout << "CART_QUEUE: first semaphore signal received\n";
 
         // Wait 5 seconds because of assignment requirement:
         // A cart contains only one row of 6 people. And leaves around every 5 seconds.
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::cout << "CART_QUEUE: waiting cart\n";
+        cart_ride_sema.wait();
 
         // Lock the cart_one vector to this thread to avoid mutual access
         cart_one_mutex.lock();
 
         // Check if the front group in first queue can fit in the cart
-        while (spots_left(&cart_one) <= first_queue.front().size) {
+        while (spots_left(&cart_one) >= first_queue.front().size) {
 
             // Add front group to cart
             cart_one.groups.push_back(first_queue.front());
