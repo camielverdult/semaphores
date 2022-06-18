@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(semaphores C CXX)
 
-set(CXX_STANDARD 23)
+set (CMAKE_CXX_STANDARD 11)
 
 # assume built-in pthreads on MacOS
 IF(APPLE)
