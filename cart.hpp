@@ -15,7 +15,6 @@ typedef struct cart {
     unsigned int capacity;
     std::vector<group> groups;
     bool left;
-    bool back;
 } cart;
 
 void init_cart(cart* cart) {
@@ -36,6 +35,30 @@ void init_carts() {
     init_cart(&cart_one);
 }
 
+void print_cart_row() {
+
+    // Lock the cart_one vector to this thread to avoid mutual access
+    cart_one_mutex.lock();
+
+    for (group g : cart_one.groups) {
+        for (int i = 0; i < g.size; i++) {
+            switch (g.size) {
+                case 1:
+                    std::cout << "1️⃣";
+                    break;
+                case 2:
+                    std::cout << "2️⃣";
+                    break;
+                case 3:
+                    std::cout << "3️⃣";
+                    break;
+            }
+        }
+    }
+
+    cart_one_mutex.unlock();
+}
+
 _Noreturn void cart_ride() {
 
     std::cout << "CART_RIDE: hello!\n";
@@ -45,6 +68,8 @@ _Noreturn void cart_ride() {
         cart_ride_sema.wait();
 
         cart_one.left = true;
+
+        print_cart_row();
 
         std::cout << "CART_RIDE: cart is leaving!\n";
 
@@ -154,29 +179,6 @@ _Noreturn void fill_cart_from_single_queue() {
     }
 }
 
-void print_cart_row() {
-
-    // Lock the cart_one vector to this thread to avoid mutual access
-    cart_one_mutex.lock();
-
-    for (group g : cart_one.groups) {
-        for (int i = 0; i < g.size; i++) {
-            switch (g.size) {
-                case 1:
-                    std::cout << "1️⃣";
-                    break;
-                case 2:
-                    std::cout << "2️⃣";
-                    break;
-                case 3:
-                    std::cout << "3️⃣";
-                    break;
-            }
-        }
-    }
-
-    cart_one_mutex.unlock();
-}
 
 
 #endif //SEMAPHORES_CART_HPP
