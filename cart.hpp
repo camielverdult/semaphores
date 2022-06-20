@@ -35,23 +35,36 @@ void init_carts() {
 void print_cart_row() {
 
     std::cout << "Cart row content:\n";
+    std::cout << " 1 2 3\n";
+
+    int amount[3] = {0};
 
     for (group g: cart_one.groups) {
-        for (int i = 0; i < g.size; i++) {
-            switch (g.size) {
-                case 1:
-                    std::cout << "1";
-                    break;
-                case 2:
-                    std::cout << "2";
-                    break;
-                case 3:
-                    std::cout << "3";
-                    break;
-            }
+        amount[g.size - 1]++;
+    }
+
+    std::cout << "[";
+
+    for (int i = 0; i < 3; i++) {
+        std::cout << amount[i];
+
+        if (i < 2) {
+            std::cout << "-";
         }
     }
-    std::cout << "\n";
+
+    std::cout << "]\n";
+
+    std::cout << "(";
+
+    for (int i = 0; i < 3; i++) {
+        std::cout << amount[i] << "x" << i+1;
+
+        if (i < 2) {
+            std::cout << ", ";
+        }
+    }
+    std::cout << ")\n";
 }
 
 [[noreturn]] void cart_ride() {
@@ -101,6 +114,8 @@ unsigned int spots_left(cart* cart) {
     while (true) { // Thread loop
 
         while (!group_queue.empty()) {
+
+            std::cout << "CART_QUEUE: Group queue size is:\n";
 
             // Check if the front group in first queue can fit in the cart
             while (spots_left(&cart_one) >= group_queue.front().size) {
@@ -177,7 +192,5 @@ unsigned int spots_left(cart* cart) {
         single_queue_sema.signal();
     }
 }
-
-
 
 #endif //SEMAPHORES_CART_HPP
