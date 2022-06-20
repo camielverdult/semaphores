@@ -53,9 +53,7 @@ void print_cart_row() {
         }
     }
 
-    std::cout << "]\n";
-
-    std::cout << "(";
+    std::cout << "] (";
 
     for (int i = 0; i < 3; i++) {
         std::cout << amount[i] << "x" << i+1;
@@ -64,6 +62,16 @@ void print_cart_row() {
             std::cout << ", ";
         }
     }
+    std::cout << ", order: ";
+
+    for (int i = 0; i < cart_one.groups.size(); i++) {
+        std::cout << cart_one.groups[i].size;
+
+        if (i < cart_one.groups.size() - 1) {
+            std::cout << ", ";
+        }
+    }
+
     std::cout << ")\n";
 }
 
