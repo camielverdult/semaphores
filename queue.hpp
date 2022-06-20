@@ -22,7 +22,7 @@ typedef struct group {
 // Er wordt gezorgd voor niet mutual access door mutexes
 
 // Queue for first queue
-std::queue<group> first_queue;
+std::queue<group> group_queue;
 std::mutex first_queue_mutex;
 
 // Queue for second queue
@@ -35,14 +35,14 @@ std::mutex single_queue_mutex;
     std::mt19937 rng_group_size(dev_group_size());
     std::uniform_int_distribution<std::mt19937::result_type> rand_group_size(2,3);
 
-    std::cout << "FILL_1: hello!\n";
+    std::cout << "FILL_GROUP: hello!\n";
     while (true) {
 
         single_queue_mutex.lock();
 
         // About every second one group enters the normal queue
         group random_group = {.size = rand_group_size(rng_group_size)};
-        first_queue.push(random_group);
+        group_queue.push(random_group);
 
         single_queue_mutex.unlock();
 

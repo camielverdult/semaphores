@@ -79,6 +79,10 @@ void init_carts() {
 
     while (true) {
 
+        cart_ride_sema.wait();
+
+        cart_one_mutex.lock();
+
         cart_one.left = true;
 
         std::cout << "CART_RIDE: cart is leaving!\n";
@@ -91,6 +95,8 @@ void init_carts() {
         cart_one.left = false;
         // All groups get out of cart
         cart_one.groups.clear();
+
+        cart_one_mutex.unlock();
 
         std::cout << "CART_RIDE: signalling cart_ride_sema\n";
         cart_ride_sema.signal();
@@ -110,11 +116,7 @@ unsigned int spots_filled(cart* cart) {
 unsigned int spots_left(cart* cart) {
 
     // Lock the cart_one vector to this thread to avoid mutual access
-    cart_one_mutex.lock();
-
     unsigned int people_in_cart = spots_filled(cart);
-
-    cart_one_mutex.unlock();
 
     return cart->capacity - people_in_cart;
 }
@@ -122,55 +124,48 @@ unsigned int spots_left(cart* cart) {
 [[noreturn]] void fill_cart_from_first_queue() {
     std::cout << "CART_QUEUE: hello!\n";
 
-    while (true) {
+    while (true) { // Thread loop
 
-        // Lock the cart_one vector to this thread to avoid mutual access
-        cart_one_mutex.lock();
+        while (!group_queue.empty()) {
 
-        // Check if the front group in first queue can fit in the cart
-        while (spots_left(&cart_one) >= first_queue.front().size) {
+            // Lock the cart_one vector to this thread to avoid mutual access
+            cart_one_mutex.lock();
 
-            std::cout << "CART_SINGLE: filling cart with group of " << first_queue.front().size << " people\n";
+            // Check if the front group in first queue can fit in the cart
+            while (spots_left(&cart_one) >= group_queue.front().size) {
 
-            // Add front group to cart
-            cart_one.groups.push_back(first_queue.front());
+                std::cout << "CART_QUEUE: filling cart with group of " << group_queue.front().size << " people\n";
 
-            // Removes front element in first queue
-            first_queue.pop();
-        }
+                // Add front group to cart
+                cart_one.groups.push_back(group_queue.front());
 
-        // Check if we need to signal the fill_cart_from_single_queue thread
-        if (spots_left(&cart_one)) {
-            unsigned int spots_to_fill = spots_left(&cart_one);
+                // Removes front element in first queue
+                group_queue.pop();
 
-            // Pretty print
-            std::cout << "CART_SINGLE: filling last ";
-
-            if (spots_to_fill > 1) {
-                std::cout << "spot";
-            } else {
-                std::cout << spots_to_fill << " spots ";
+                if (group_queue.empty()) {
+                    break;
+                }
             }
 
-            std::cout << " in cart\n";
-            // Pretty print end
+            // Check if we need to signal the fill_cart_from_single_queue thread
+            if (spots_left(&cart_one)) {
+                // Signal single rider fill thread
+                std::cout << "CART_QUEUE: signaling single semaphore\n";
+                single_queue_sema.signal();
+                std::cout << "CART_QUEUE: waiting first semaphore\n";
+                single_queue_sema.wait();
+            }
 
-            // Signal single rider fill thread
-            std::cout << "CART_QUEUE: signaling single semaphore\n";
-            single_queue_sema.signal();
-            std::cout << "CART_QUEUE: waiting first semaphore\n";
-            single_queue_sema.wait();
+            cart_one_mutex.unlock();
+
+            std::cout << "\n";
+
+            // Let cart leave
+            std::cout << "CART_QUEUE: signalling cart_ride_sema\n";
+            cart_ride_sema.signal();
+            std::cout << "CART_QUEUE: waiting cart_ride_sema\n";
+            cart_ride_sema.wait();
         }
-
-        cart_one_mutex.unlock();
-
-        std::cout << "\n";
-
-        // Let cart leave
-        std::cout << "CART_QUEUE: signalling cart_ride_sema";
-        cart_ride_sema.signal();
-        std::cout << "CART_QUEUE: waiting cart_ride_sema";
-        cart_ride_sema.wait();
     }
 }
 
@@ -182,9 +177,25 @@ unsigned int spots_left(cart* cart) {
         std::cout << "CART_SINGLE: waiting single semaphore\n";
         single_queue_sema.wait();
 
-        while (spots_left(&cart_one) != 0) {
-            cart_one.groups.push_back(first_queue.front());
-            first_queue.pop();
+        unsigned int spots_to_fill = spots_left(&cart_one);
+
+        // Pretty print
+        std::cout << "CART_QUEUE: filling last ";
+
+        if (spots_to_fill == 1) {
+            std::cout << "spot";
+        } else {
+            std::cout << spots_to_fill << " spots";
+        }
+
+        std::cout << " in cart\n";
+        // Pretty print end
+
+        while (!single_queue.empty()) {
+            if (spots_left(&cart_one) != 0) {
+                cart_one.groups.push_back(single_queue.front());
+                group_queue.pop();
+            }
         }
 
         std::cout << "CART_SINGLE: signaling single semaphore\n";
