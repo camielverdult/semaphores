@@ -14,18 +14,15 @@
 typedef struct cart {
     unsigned int capacity;
     std::vector<group> groups;
-    bool left;
 } cart;
 
 void init_cart(cart* cart) {
     cart->capacity = 6;
-    cart->left = false;
 }
 
 // Control variables needed for cart
 cart cart_one;
 Semaphore cart_ride_sema;
-std::mutex cart_one_mutex;
 
 // Control variable needed for single queue
 Semaphore single_queue_sema;
@@ -35,42 +32,26 @@ void init_carts() {
     init_cart(&cart_one);
 }
 
-[[noreturn]] void print_cart_row() {
+void print_cart_row() {
 
-    while (true) {
+    std::cout << "Cart row content:\n";
 
-        // Lock the cart_one vector to this thread to avoid mutual access
-        cart_one_mutex.lock();
-
-        std::cout << "Cart left: ";
-
-        if (cart_one.left) {
-            std::cout << "✅";
-        } else {
-            std::cout << "❌";
-        }
-
-        std::cout << "\n";
-
-        for (group g: cart_one.groups) {
-            for (int i = 0; i < g.size; i++) {
-                switch (g.size) {
-                    case 1:
-                        std::cout << "1️⃣";
-                        break;
-                    case 2:
-                        std::cout << "2️⃣";
-                        break;
-                    case 3:
-                        std::cout << "3️⃣";
-                        break;
-                }
+    for (group g: cart_one.groups) {
+        for (int i = 0; i < g.size; i++) {
+            switch (g.size) {
+                case 1:
+                    std::cout << "1";
+                    break;
+                case 2:
+                    std::cout << "2";
+                    break;
+                case 3:
+                    std::cout << "3";
+                    break;
             }
         }
-
-        cart_one_mutex.unlock();
-        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
+    std::cout << "\n";
 }
 
 [[noreturn]] void cart_ride() {
@@ -81,10 +62,6 @@ void init_carts() {
 
         cart_ride_sema.wait();
 
-        cart_one_mutex.lock();
-
-        cart_one.left = true;
-
         std::cout << "CART_RIDE: cart is leaving!\n";
 
         for (int i = 0; i < 5; i++) {
@@ -92,11 +69,8 @@ void init_carts() {
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
-        cart_one.left = false;
         // All groups get out of cart
         cart_one.groups.clear();
-
-        cart_one_mutex.unlock();
 
         std::cout << "CART_RIDE: signalling cart_ride_sema\n";
         cart_ride_sema.signal();
@@ -128,9 +102,6 @@ unsigned int spots_left(cart* cart) {
 
         while (!group_queue.empty()) {
 
-            // Lock the cart_one vector to this thread to avoid mutual access
-            cart_one_mutex.lock();
-
             // Check if the front group in first queue can fit in the cart
             while (spots_left(&cart_one) >= group_queue.front().size) {
 
@@ -156,9 +127,9 @@ unsigned int spots_left(cart* cart) {
                 single_queue_sema.wait();
             }
 
-            cart_one_mutex.unlock();
-
             std::cout << "\n";
+
+            print_cart_row();
 
             // Let cart leave
             std::cout << "CART_QUEUE: signalling cart_ride_sema\n";
@@ -180,7 +151,7 @@ unsigned int spots_left(cart* cart) {
         unsigned int spots_to_fill = spots_left(&cart_one);
 
         // Pretty print
-        std::cout << "CART_QUEUE: filling last ";
+        std::cout << "CART_SINGLE: filling last ";
 
         if (spots_to_fill == 1) {
             std::cout << "spot";
@@ -191,10 +162,14 @@ unsigned int spots_left(cart* cart) {
         std::cout << " in cart\n";
         // Pretty print end
 
-        while (!single_queue.empty()) {
-            if (spots_left(&cart_one) != 0) {
+        while (spots_left(&cart_one) != 0) {
+            if (!single_queue.empty()) {
                 cart_one.groups.push_back(single_queue.front());
                 group_queue.pop();
+            }
+            else {
+                std::cout << "CART_SINGLE: Queue empty, cart is not full!\n";
+                std::this_thread::sleep_for(std::chrono::seconds (1));
             }
         }
 
