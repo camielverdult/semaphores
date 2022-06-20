@@ -29,7 +29,7 @@ std::mutex first_queue_mutex;
 std::queue<group> single_queue;
 std::mutex single_queue_mutex;
 
-_Noreturn void fill_first_queue() {
+[[noreturn]] void fill_first_queue() {
     // This generates a uniform distribution of groups being either 2 or 3 people big
     std::random_device dev_group_size;
     std::mt19937 rng_group_size(dev_group_size());
@@ -51,7 +51,7 @@ _Noreturn void fill_first_queue() {
     }
 }
 
-_Noreturn void fill_single_rider_queue() {
+[[noreturn]] void fill_single_rider_queue() {
 
     std::cout << "FILL_SINGLE: hello!\n";
     while (true) {

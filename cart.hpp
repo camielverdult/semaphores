@@ -35,7 +35,7 @@ void init_carts() {
     init_cart(&cart_one);
 }
 
-_Noreturn void print_cart_row() {
+[[noreturn]] void print_cart_row() {
 
     while (true) {
 
@@ -73,7 +73,7 @@ _Noreturn void print_cart_row() {
     }
 }
 
-_Noreturn void cart_ride() {
+[[noreturn]] void cart_ride() {
 
     std::cout << "CART_RIDE: hello!\n";
 
@@ -97,37 +97,40 @@ _Noreturn void cart_ride() {
     }
 }
 
+unsigned int spots_filled(cart* cart) {
+
+    return std::accumulate(cart->groups.begin(),
+                           cart->groups.end(),
+                           0,
+                           [](int sum, group b) {
+                               return sum + b.size;
+                           });
+}
+
 unsigned int spots_left(cart* cart) {
 
     // Lock the cart_one vector to this thread to avoid mutual access
     cart_one_mutex.lock();
 
-    unsigned int people_in_cart = std::accumulate(cart->groups.begin(),
-                                                  cart->groups.end(),
-                                                  0,
-                                                  [](int sum, group b) {
-        return sum + b.size;
-    });
+    unsigned int people_in_cart = spots_filled(cart);
 
     cart_one_mutex.unlock();
 
     return cart->capacity - people_in_cart;
 }
 
-_Noreturn void fill_cart_from_first_queue() {
+[[noreturn]] void fill_cart_from_first_queue() {
     std::cout << "CART_QUEUE: hello!\n";
 
     while (true) {
-
-        // Wait 5 seconds because of assignment requirement:
-        // A cart contains only one row of 6 people. And leaves around every 5 seconds.
-        std::cout << "CART_QUEUE: waiting cart\n";
 
         // Lock the cart_one vector to this thread to avoid mutual access
         cart_one_mutex.lock();
 
         // Check if the front group in first queue can fit in the cart
         while (spots_left(&cart_one) >= first_queue.front().size) {
+
+            std::cout << "CART_SINGLE: filling cart with group of " << first_queue.front().size << " people\n";
 
             // Add front group to cart
             cart_one.groups.push_back(first_queue.front());
@@ -171,7 +174,7 @@ _Noreturn void fill_cart_from_first_queue() {
     }
 }
 
-_Noreturn void fill_cart_from_single_queue() {
+[[noreturn]] void fill_cart_from_single_queue() {
 
     std::cout << "CART_SINGLE: hello!\n";
 
