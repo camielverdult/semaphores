@@ -18,14 +18,14 @@ typedef struct group {
     unsigned int size;
 } group_t;
 
-// Semaphore and queue for first queue
-Semaphore first_queue_sema;
+// We gebruiken hier geen semaphores want de rijen kunnen worden gevuld en geleegd tegelijk
+// Er wordt gezorgd voor niet mutual access door mutexes
+
+// Queue for first queue
 std::queue<group> first_queue;
 std::mutex first_queue_mutex;
 
-
-// Semaphore and queue for second queue
-Semaphore single_queue_sema;
+// Queue for second queue
 std::queue<group> single_queue;
 std::mutex single_queue_mutex;
 
@@ -49,13 +49,13 @@ _Noreturn void fill_first_queue() {
         // Wait for people to fill the queue
         std::this_thread::sleep_for(std::chrono::seconds (1));
 
-        // Signal other thread that queue is full
-        std::cout << "FILL_1: signaling semaphore\n";
-        first_queue_sema.signal();
-
-        // Wait until other thread empties queue
-        std::cout << "FILL_1: waiting semaphore\n";
-        first_queue_sema.wait();
+//        // Signal other thread that queue is full
+//        std::cout << "FILL_1: signaling semaphore\n";
+//        first_queue_sema.signal();
+//
+//        // Wait until other thread empties queue
+//        std::cout << "FILL_1: waiting semaphore\n";
+//        first_queue_sema.wait();
     }
 }
 

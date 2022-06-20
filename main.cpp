@@ -3,7 +3,6 @@
 
 #include "queue.hpp"
 #include "cart.hpp"
-#include "queue.hpp"
 
 int main() {
     init_carts();
@@ -23,6 +22,6 @@ int main() {
     first_fill_from_single_queue_thread.join();
 
     cart_ride_thread.join();
-    
+
     return 0;
 }

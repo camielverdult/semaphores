@@ -23,9 +23,13 @@ void init_cart(cart* cart) {
     cart->left = false;
 }
 
+// Control variables needed for cart
 cart cart_one;
 Semaphore cart_ride_sema;
 std::mutex cart_one_mutex;
+
+// Control variable needed for single queue
+Semaphore single_queue_sema;
 
 void init_carts() {
     // A cart contains only one row of 6 people. And leaves around every 5 seconds.
@@ -40,12 +44,18 @@ _Noreturn void cart_ride() {
         std::cout << "CART_RIDE: waiting cart_ride_sema\n";
         cart_ride_sema.wait();
 
+        cart_one.left = true;
+
         std::cout << "CART_RIDE: cart is leaving!\n";
 
         for (int i = 0; i < 5; i++) {
             std::cout << "CART_RIDE: weee!\n";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
+
+        cart_one.left = false;
+        // All groups get out of cart
+        cart_one.groups.clear();
 
         std::cout << "CART_RIDE: signalling cart_ride_sema";
         cart_ride_sema.signal();
@@ -57,7 +67,10 @@ unsigned int spots_left(cart* cart) {
     // Lock the cart_one vector to this thread to avoid mutual access
     cart_one_mutex.lock();
 
-    unsigned int people_in_cart = std::accumulate(cart->groups.begin(), cart->groups.end(), 0, [](int sum, group b) {
+    unsigned int people_in_cart = std::accumulate(cart->groups.begin(),
+                                                  cart->groups.end(),
+                                                  0,
+                                                  [](int sum, group b) {
         return sum + b.size;
     });
 
@@ -70,14 +83,10 @@ _Noreturn void fill_cart_from_first_queue() {
     std::cout << "CART_QUEUE: hello!\n";
 
     while (true) {
-        std::cout << "CART_QUEUE: waiting first semaphore\n";
-        first_queue_sema.wait();
-        std::cout << "CART_QUEUE: first semaphore signal received\n";
 
         // Wait 5 seconds because of assignment requirement:
         // A cart contains only one row of 6 people. And leaves around every 5 seconds.
         std::cout << "CART_QUEUE: waiting cart\n";
-        cart_ride_sema.wait();
 
         // Lock the cart_one vector to this thread to avoid mutual access
         cart_one_mutex.lock();
@@ -96,6 +105,7 @@ _Noreturn void fill_cart_from_first_queue() {
         if (spots_left(&cart_one)) {
             unsigned int spots_to_fill = spots_left(&cart_one);
 
+            // Pretty print
             std::cout << "CART_SINGLE: filling last ";
 
             if (spots_to_fill > 1) {
@@ -105,7 +115,9 @@ _Noreturn void fill_cart_from_first_queue() {
             }
 
             std::cout << " in cart\n";
+            // Pretty print end
 
+            // Signal single rider fill thread
             std::cout << "CART_QUEUE: signaling single semaphore\n";
             single_queue_sema.signal();
             std::cout << "CART_QUEUE: waiting first semaphore\n";
@@ -121,9 +133,6 @@ _Noreturn void fill_cart_from_first_queue() {
         cart_ride_sema.signal();
         std::cout << "CART_QUEUE: waiting cart_ride_sema";
         cart_ride_sema.wait();
-
-        std::cout << "CART_QUEUE: signaling first semaphore\n";
-        first_queue_sema.signal();
     }
 }
 
