@@ -14,6 +14,7 @@ int main() {
     std::thread first_fill_from_single_queue_thread(fill_cart_from_single_queue);
 
     std::thread cart_ride_thread(cart_ride);
+    std::thread cart_print_thread(print_cart_row);
 
     first_fill_thread.join();
     single_rider_thread.join();
@@ -22,6 +23,7 @@ int main() {
     first_fill_from_single_queue_thread.join();
 
     cart_ride_thread.join();
+    cart_print_thread.join();
 
     return 0;
 }

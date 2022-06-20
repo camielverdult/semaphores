@@ -48,14 +48,6 @@ _Noreturn void fill_first_queue() {
 
         // Wait for people to fill the queue
         std::this_thread::sleep_for(std::chrono::seconds (1));
-
-//        // Signal other thread that queue is full
-//        std::cout << "FILL_1: signaling semaphore\n";
-//        first_queue_sema.signal();
-//
-//        // Wait until other thread empties queue
-//        std::cout << "FILL_1: waiting semaphore\n";
-//        first_queue_sema.wait();
     }
 }
 

@@ -35,28 +35,42 @@ void init_carts() {
     init_cart(&cart_one);
 }
 
-void print_cart_row() {
+_Noreturn void print_cart_row() {
 
-    // Lock the cart_one vector to this thread to avoid mutual access
-    cart_one_mutex.lock();
+    while (true) {
 
-    for (group g : cart_one.groups) {
-        for (int i = 0; i < g.size; i++) {
-            switch (g.size) {
-                case 1:
-                    std::cout << "1️⃣";
-                    break;
-                case 2:
-                    std::cout << "2️⃣";
-                    break;
-                case 3:
-                    std::cout << "3️⃣";
-                    break;
+        // Lock the cart_one vector to this thread to avoid mutual access
+        cart_one_mutex.lock();
+
+        std::cout << "Cart left: ";
+
+        if (cart_one.left) {
+            std::cout << "✅";
+        } else {
+            std::cout << "❌";
+        }
+
+        std::cout << "\n";
+
+        for (group g: cart_one.groups) {
+            for (int i = 0; i < g.size; i++) {
+                switch (g.size) {
+                    case 1:
+                        std::cout << "1️⃣";
+                        break;
+                    case 2:
+                        std::cout << "2️⃣";
+                        break;
+                    case 3:
+                        std::cout << "3️⃣";
+                        break;
+                }
             }
         }
-    }
 
-    cart_one_mutex.unlock();
+        cart_one_mutex.unlock();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
 
 _Noreturn void cart_ride() {
@@ -64,12 +78,8 @@ _Noreturn void cart_ride() {
     std::cout << "CART_RIDE: hello!\n";
 
     while (true) {
-        std::cout << "CART_RIDE: waiting cart_ride_sema\n";
-        cart_ride_sema.wait();
 
         cart_one.left = true;
-
-        print_cart_row();
 
         std::cout << "CART_RIDE: cart is leaving!\n";
 
@@ -82,7 +92,7 @@ _Noreturn void cart_ride() {
         // All groups get out of cart
         cart_one.groups.clear();
 
-        std::cout << "CART_RIDE: signalling cart_ride_sema";
+        std::cout << "CART_RIDE: signalling cart_ride_sema\n";
         cart_ride_sema.signal();
     }
 }
