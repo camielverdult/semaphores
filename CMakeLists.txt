@@ -3,8 +3,8 @@ project(semaphores C CXX)
 
 set (CMAKE_CXX_STANDARD 11)
 
-# assume built-in pthreads on MacOS
-IF(APPLE)
+# Link pthreads for unix
+IF(APPLE OR UNIX)
     set(CMAKE_THREAD_LIBS_INIT "-lpthread")
     set(CMAKE_HAVE_THREADS_LIBRARY 1)
     set(CMAKE_USE_WIN32_THREADS_INIT 0)
