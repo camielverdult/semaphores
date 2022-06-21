@@ -13,7 +13,7 @@
 #include <queue>
 #include "sema.h" // cross-platform semaphore class
 
-#define DELAY_MS 100
+#define DELAY_MS 1
 
 typedef struct group {
     unsigned int size;

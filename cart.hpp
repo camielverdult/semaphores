@@ -28,9 +28,17 @@ Semaphore cart_ride_sema;
 // Control variable needed for single queue
 Semaphore single_queue_sema;
 
+std::string csv_filename;
+std::ofstream csv_file;
+
 void init_carts() {
     // A cart contains only one row of 6 people. And leaves around every 5 seconds.
     init_cart(&cart_one);
+    csv_filename = "baron_" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".csv";
+
+    // Open CSV log file
+    csv_file.open(csv_filename, std::ios_base::app);
+    csv_file << "ms_since_epoch, groups_of_three, groups_of_two, groups_of_one, row_order\n";
 }
 
 void print_cart_row() {
@@ -44,11 +52,10 @@ void print_cart_row() {
         amount[g.size - 1]++;
     }
 
-    std::ofstream csv_file;
-    csv_file.open("baron.csv", std::ios_base::app);
-
+    // Write unix timestamp (milliseconds since epoch)
     csv_file << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << ", ";
 
+    // Write group size amount
     csv_file << amount[2] << ", " << amount[1] << ", " << amount[0] << ", ";
 
     std::cout << "[";
@@ -74,6 +81,8 @@ void print_cart_row() {
 
     for (int i = 0; i < cart_one.groups.size(); i++) {
         std::cout << cart_one.groups[i].size;
+
+        // Write group order to CSV
         csv_file << cart_one.groups[i].size;
 
         if (i < cart_one.groups.size() - 1) {
