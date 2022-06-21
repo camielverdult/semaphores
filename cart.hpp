@@ -8,6 +8,7 @@
 #include <iostream>
 #include <mutex>
 #include <functional>
+#include <fstream>
 
 #include "queue.hpp"
 
@@ -43,6 +44,13 @@ void print_cart_row() {
         amount[g.size - 1]++;
     }
 
+    std::ofstream csv_file;
+    csv_file.open("baron.csv", std::ios_base::app);
+
+    csv_file << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << ", ";
+
+    csv_file << amount[2] << ", " << amount[1] << ", " << amount[0] << ", ";
+
     std::cout << "[";
 
     for (int i = 0; i < 3; i++) {
@@ -66,13 +74,18 @@ void print_cart_row() {
 
     for (int i = 0; i < cart_one.groups.size(); i++) {
         std::cout << cart_one.groups[i].size;
+        csv_file << cart_one.groups[i].size;
 
         if (i < cart_one.groups.size() - 1) {
+            csv_file << "-";
             std::cout << ", ";
         }
     }
 
     std::cout << ")\n";
+
+    csv_file << "\n";
+    csv_file.close();
 }
 
 [[noreturn]] void cart_ride() {
@@ -87,7 +100,7 @@ void print_cart_row() {
 
         for (int i = 0; i < 5; i++) {
             std::cout << "CART_RIDE: weee!\n";
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_MS));
         }
 
         // All groups get out of cart
@@ -192,7 +205,7 @@ unsigned int spots_left(cart* cart) {
             }
             else {
                 std::cout << "CART_SINGLE: Queue empty, cart is not full!\n";
-                std::this_thread::sleep_for(std::chrono::seconds (1));
+                std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_MS));
             }
         }
 

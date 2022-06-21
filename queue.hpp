@@ -13,6 +13,8 @@
 #include <queue>
 #include "sema.h" // cross-platform semaphore class
 
+#define DELAY_MS 100
+
 typedef struct group {
     unsigned int size;
 } group_t;
@@ -37,7 +39,7 @@ std::queue<group> single_queue;
         group_queue.push(random_group);
 
         // Wait for people to fill the queue
-        std::this_thread::sleep_for(std::chrono::seconds (1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(DELAY_MS));
     }
 }
 
@@ -47,7 +49,7 @@ std::queue<group> single_queue;
     while (true) {
 
         // About every two seconds one person enters the single rider queue
-        std::this_thread::sleep_for(std::chrono::seconds (2));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2*DELAY_MS));
 
         // We fill the queue here
         group single_rider = {.size = 1};

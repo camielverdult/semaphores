@@ -5,6 +5,7 @@
 #include "cart.hpp"
 
 int main() {
+
     init_carts();
 
     std::thread first_fill_thread(fill_first_queue);
