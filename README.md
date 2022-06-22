@@ -6,7 +6,6 @@ Camiel Verdult & Marnix Laar
 A roller-coaster's queues have been split into two queues. A queue with groups of 2 or 3 people, and a queue with single riders. The carts of the rollercoaster fit 6 people in a row.
 Our job is to write a piece of software that keeps track of the queues and fills the carts with groups first, and finishes off with single riders.
 
-
 ## Methodology
 
 To keep track of queues and carts, we have 5 variables on the program heap with infinite lifetime. One of these is the cart, two are semaphores for thread flow control and two are for the group and single queues.
