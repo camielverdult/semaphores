@@ -26,7 +26,7 @@ For verifying that this program works for longer periods of time or when threads
 
 By collecting data of riders, we can determine how many of which groups have gone in the roller coaster. In the graph below it becomes clear that more groups of two and three get to go in the coaster than single riders. This is no surprise as these groups are prioritised, and the single riders are only used to fill the carts in case no groups fit anymore.
 
-<img src="img/Semaphore_graph.svg">
-<img src="img/group-distribution.svg">
+![](img/Semaphore_graph.svg)
+![](img/group-distribution.svg)
 
 It makes sense that there are more groups of three and two than single riders. This is because groups will always be fitted first, and single riders will fit only when there is space left in the cart. This means that a cart can be filled with 2 groups of three or 3 groups of two, without the need for a single rider to be added.
