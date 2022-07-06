@@ -196,6 +196,10 @@ unsigned int spots_left(cart* cart) {
         std::cout << "CART_SINGLE: waiting single semaphore\n";
         single_queue_sema.wait();
 
+        while (single_queue.empty()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        }
+
         unsigned int spots_to_fill = spots_left(&cart_one);
 
         // Pretty print
