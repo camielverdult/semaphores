@@ -150,6 +150,10 @@ unsigned int spots_left(cart* cart) {
 
             std::cout << "CART_QUEUE: Group queue size is:\n";
 
+            while (group_queue.empty()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            }
+
             // Check if the front group in first queue can fit in the cart
             while (spots_left(&cart_one) >= group_queue.front().size) {
 
