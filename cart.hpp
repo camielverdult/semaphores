@@ -103,9 +103,6 @@ void print_cart_row() {
 
     while (true) {
 
-        // Sleep before waiting
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
         cart_ride_sema.wait();
 
         std::cout << "CART_RIDE: cart is leaving!\n";
