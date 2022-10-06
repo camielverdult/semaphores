@@ -28,3 +28,7 @@ By collecting data of riders, we can determine how many of which groups have gon
 ![](img/group-distribution_percentage.svg)
 
 It makes sense that there are more groups of three and two than single riders. This is because groups will always be fitted first, and single riders will fit only when there is space left in the cart. This means that a cart can be filled with 2 groups of three or 3 groups of two, without the need for a single rider to be added.
+
+## Conclusion
+
+This was a very interesting and fun assignment to do, it has definitely learned me the use of semaphores for thread-based operations.
