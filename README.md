@@ -10,9 +10,7 @@ Our job is to write a piece of software that keeps track of the queues and fills
 
 The assignment was to simulate the baron 1898 roller coaster using threads that fill and empty the riders queue and a thread that would act as the cart. These threads would communicate through semaphores to let threads know what should happen next. To keep track of queues and carts, we have 5 variables on the program heap with infinite lifetime. One of these is the cart, two are semaphores for thread flow control and two are for the group and single queues.
 
-These semaphores can be waited (`sem_wait`) and signaled (`sem_signal`) to inform a thread/process to continue/pause operation. This waiting and signalling of other threads/processes prevents possible deadlocking of the program by ensuring sequential thread flow.
-
-A general overview of the program is depicted in the diagram below.
+The semaphores can be waited (`sem_wait`) and signaled (`sem_signal`) to inform a thread/process to continue/pause operation. This waiting and signalling of other threads/processes prevents possible deadlocking of the program by ensuring sequential thread flow. A general overview of the program is depicted in the diagram below.
 
 ![](diagram/semaphores.png)
 
