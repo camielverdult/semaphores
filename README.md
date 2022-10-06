@@ -6,9 +6,9 @@ Camiel Verdult & Marnix Laar
 A roller-coaster's queues have been split into two queues. A queue with groups of 2 or 3 people, and a queue with single riders. The carts of the rollercoaster fit 6 people in a row.
 Our job is to write a piece of software that keeps track of the queues and fills the carts with groups first, and finishes off with single riders.
 
-## Methodology
+## Assignment
 
-To keep track of queues and carts, we have 5 variables on the program heap with infinite lifetime. One of these is the cart, two are semaphores for thread flow control and two are for the group and single queues.
+The assignment was to simulate the baron 1898 roller coaster using threads that fill and empty the riders queue and a thread that would act as the cart. These threads would communicate through semaphores to let threads know what should happen next. To keep track of queues and carts, we have 5 variables on the program heap with infinite lifetime. One of these is the cart, two are semaphores for thread flow control and two are for the group and single queues.
 
 These semaphores can be waited (`sem_wait`) and signaled (`sem_signal`) to inform a thread/process to continue/pause operation. This waiting and signalling of other threads/processes prevents possible deadlocking of the program by ensuring sequential thread flow.
 
@@ -20,7 +20,7 @@ Different threads have different access to the heap. The combination of the acce
 
 ## Testing
 
-For verifying that this program works for longer periods of time or when threads run at different speeds. The program was tested with very low delays for filling the queues and cart. This low delay meant that the program could be simulated to run a lot of cycles in a short time, while performing a lot of read and write operations on the `std::queue` queues per second. The `std::queue` type is not thread-safe, so this would mean that we could come across some weird behaviour. This did not happen, since the fill and empty thread do not access the same elements in the queue. The fill thread puts new groups in the back of the queue, while the empty thread retrieved groups from the front of the queue.
+For verifying that this program works for longer periods of time or when threads run at different speeds. The program was tested with very low delays for filling the queues and cart. This low delay meant that the program could be simulated to run a lot of cycles in a short time, while performing a lot of read and write operations on the `std::queue` queues per second. The `std::queue` type is not thread-safe, so this would mean that we could come across some weird behaviour. This did not happen, since the fill and empty thread do not access the same elements in the queue. The fill thread puts new groups in the back of the queue, while the empty thread retrieved groups from the front of the queue. The program does not lock up, even with very low delays for filling and emptying the cart.
 
 ## Results
 
