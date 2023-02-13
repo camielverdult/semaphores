@@ -3,12 +3,12 @@ Camiel Verdult & Marnix Laar
 
 ## Introduction
 
-A roller-coaster's queues have been split into two queues. A queue with groups of 2 or 3 people, and a queue with single riders. The carts of the rollercoaster fit 6 people in a row.
+We received an assigment to simulate the queing system for a Baron 1898 roller coaster in the Efteling for our Operating Systems 2 class in the Applied Computer Science study. The roller-coaster's queues have been split into two queues. A queue with groups of 2 or 3 people, and a queue with single riders. The carts of the rollercoaster fit 6 people in a row.
 Our job is to write a piece of software that keeps track of the queues and fills the carts with groups first, and finishes off with single riders.
 
 ## Assignment
 
-The assignment was to simulate the baron 1898 roller coaster using threads that fill and empty the riders queue and a thread that would act as the cart. These threads would communicate through semaphores to let threads know what should happen next. To keep track of queues and carts, we have 5 variables on the program heap with infinite lifetime. One of these is the cart, two are semaphores for thread flow control and two are for the group and single queues.
+The assignment was to simulate the Baron 1898 roller coaster using threads that fill and empty the riders queue and a thread that would act as the cart. These threads would communicate through semaphores to let threads know what should happen next. To keep track of queues and carts, we have 5 variables on the program heap with infinite lifetime. One of these is the cart, two are semaphores for thread flow control and two are for the group and single queues.
 
 The semaphores can be waited (`sem_wait`) and signaled (`sem_signal`) to inform a thread/process to continue/pause operation. This waiting and signalling of other threads/processes prevents possible deadlocking of the program by ensuring sequential thread flow. A general overview of the program is depicted in the diagram below.
 
@@ -31,4 +31,4 @@ It makes sense that there are more groups of three and two than single riders. T
 
 ## Conclusion
 
-This was a very interesting and fun assignment to do, it has definitely learned me the use of semaphores for thread-based operations.
+We have built a program that simulates the queuing system of Baron 1898 and analysed its behaviour to verify that the program flow would not deadlock and displayed normally-distributed results that were to be expected by the random number generation module we used. This was a very interesting and fun assignment to do, it has definitely learned me the use of semaphores for thread-based operations.
