@@ -37,8 +37,9 @@ void init_carts() {
     csv_filename = "baron_" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ".csv";
 
     // Open CSV log file
-    csv_file.open(csv_filename, std::ios_base::app);
+    csv_file.open(csv_filename, std::ios_base::out);
     csv_file << "ms_since_epoch, groups_of_three, groups_of_two, groups_of_one, row_order\n";
+    csv_file.close();
 }
 
 void print_cart_row() {
@@ -53,31 +54,19 @@ void print_cart_row() {
     }
 
     // Write unix timestamp (milliseconds since epoch)
+    csv_file.open(csv_filename, std::ios_base::app);
     csv_file << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << ", ";
 
     // Write group size amount
     csv_file << amount[2] << ", " << amount[1] << ", " << amount[0] << ", ";
 
-    std::cout << "[";
+    // Print out row content in table format
+    std::cout << "[" << amount[0] << " " << amount[1]<< " " << amount[2] << "]";
 
-    for (int i = 0; i < 3; i++) {
-        std::cout << amount[i];
+    std::cout << "\n";
 
-        if (i < 2) {
-            std::cout << "-";
-        }
-    }
-
-    std::cout << "] (";
-
-    for (int i = 0; i < 3; i++) {
-        std::cout << amount[i] << "x" << i+1;
-
-        if (i < 2) {
-            std::cout << ", ";
-        }
-    }
-    std::cout << ", order: ";
+    // Write out order
+    std::cout << "Row order: ";
 
     for (int i = 0; i < cart_one.groups.size(); i++) {
         std::cout << cart_one.groups[i].size;
@@ -85,14 +74,14 @@ void print_cart_row() {
         // Write group order to CSV
         csv_file << cart_one.groups[i].size;
 
+        // Add seperator character in between values except for last value
         if (i < cart_one.groups.size() - 1) {
             csv_file << "-";
             std::cout << ", ";
         }
     }
 
-    std::cout << ")\n";
-
+    std::cout << "\n\n";
     csv_file << "\n";
     csv_file.close();
 }
